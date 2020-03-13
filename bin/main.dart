@@ -35,7 +35,10 @@ class SeqCommand extends Command {
   @override
   void run() {
     seq.convert(argResults['input'], argResults['output'],
-        verbose: argResults['verbose'], overwrite: argResults['overwrite']);
+        inputFormat: argResults['input-format'],
+        outputFormat: argResults['output-format'],
+        verbose: argResults['verbose'],
+        overwrite: argResults['overwrite']);
   }
 
   SeqCommand() {
@@ -43,6 +46,8 @@ class SeqCommand extends Command {
       ..addOption('input',
           abbr: 'i', callback: (file) => utils.fileIsExist(file))
       ..addOption('output', abbr: 'o')
+      ..addOption('input-format', abbr: 's')
+      ..addOption('output-format', abbr: 't')
       ..addFlag('verbose', abbr: 'v')
       ..addFlag('overwrite', abbr: 'f');
   }
