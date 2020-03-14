@@ -89,29 +89,64 @@ Stream<Seq> readFq(File file) async* {
   log.info('finish reading fastq file~');
 }
 
-// convert formats
-void convert(String inputFile, String outputFile,
+void stream2File(Stream<Seq> seqStream, File outfile, String outputFormat,
+    {int lineLength = 0}) {
+  var outwrite = outfile.openWrite();
+  seqStream.listen((Seq s) {
+    if (outputFormat == 'fa') {
+      outwrite.write(s.toFaString(lineLength: lineLength));
+    } else if (outputFormat == 'fq') {
+      outwrite.write(s.toFqString());
+    }
+  }, onDone: () {
+    outwrite.close();
+    log.info('outFile is now closed.');
+  });
+}
+
+/// convert formats
+/// subset sequence
+void seqIO(String inputFile, String outputFile,
     {String inputFormat,
     String outputFormat,
     int fastaLineLength,
+    String subset,
     bool verbose = false,
     bool overwrite = false}) {
   final log = utils.logger('bio:Seq', verbose: verbose);
 
   // TODO: put file format checker into better place
+  var supportedFormats = {
+    'fa': 'fa',
+    'fas': 'fa',
+    'fasta': 'fa',
+    'fastq': 'fq',
+    'fq': 'fq'
+  };
   inputFormat ??= inputFile.split('.').last;
+  if (supportedFormats.containsKey(inputFormat)) {
+    inputFormat = supportedFormats[inputFormat];
+  } else {
+    log.warning('${inputFormat} format is not supported!');
+    exit(1);
+  }
   outputFormat ??= outputFile.split('.').last;
+  if (supportedFormats.containsKey(outputFormat)) {
+    outputFormat = supportedFormats[outputFormat];
+  } else {
+    log.warning('${outputFormat} format is not supported!');
+    exit(1);
+  }
 
-  utils.fileIsExist(inputFile);
   final infile = File(inputFile);
+  utils.fileIsExist(inputFile);
   final outfile = File(outputFile);
   if (outfile.existsSync() && !overwrite) {
     log.warning('${outfile.path} has exist, your may try to overwrite!');
     exit(1);
   }
 
-  var outwrite = outfile.openWrite();
-
+  // Read file as Stream<Seq>
   Stream<Seq> inputStream;
   if (inputFormat == 'fa') {
     inputStream = readFa(infile);
@@ -121,19 +156,13 @@ void convert(String inputFile, String outputFile,
     log.warning('${inputFormat} format is not supported!');
     exit(1);
   }
-  inputStream.listen((Seq s) {
-    if (outputFormat == 'fa') {
-      outwrite.write(s.toFaString(lineLength: fastaLineLength));
-    } else if (outputFormat == 'fq') {
-      outwrite.write(s.toFqString());
-    } else {
-      log.warning('${outputFormat} format is not supported!');
-      exit(1);
-    }
-  }, onDone: () {
-    outwrite.close();
-    log.info('outFile is now closed.');
-  }, onError: (e) {
-    log.warning(e.toString());
-  });
+
+  // filter Stream<Seq>
+  if (subset != null) {
+    var subsetNames = File(subset).readAsLinesSync();
+    inputStream = inputStream.where((s) => subsetNames.contains(s.name));
+  }
+
+  // Wrtie Stream<Seq> into file
+  stream2File(inputStream, outfile, outputFormat, lineLength: fastaLineLength);
 }

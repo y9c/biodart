@@ -34,10 +34,11 @@ class SeqCommand extends Command {
   final description = 'Deal with sequence file in various formats.';
   @override
   void run() {
-    seq.convert(argResults['input'], argResults['output'],
+    seq.seqIO(argResults['input'], argResults['output'],
         inputFormat: argResults['input-format'],
         outputFormat: argResults['output-format'],
         fastaLineLength: int.parse(argResults['fasta-line-length']),
+        subset: argResults['subset'],
         verbose: argResults['verbose'],
         overwrite: argResults['overwrite']);
   }
@@ -52,6 +53,8 @@ class SeqCommand extends Command {
           abbr: 't', help: 'Format of output file', valueHelp: 'auto')
       ..addOption('fasta-line-length',
           abbr: 'l', defaultsTo: '0', help: 'Number of charaters in each line')
+      ..addOption('subset',
+          abbr: 'n', help: 'Extract sequences with names in file `name.list`')
       ..addFlag('verbose', abbr: 'v')
       ..addFlag('overwrite', abbr: 'f');
   }
