@@ -1,6 +1,5 @@
 import 'package:bio/bio.dart' as bio;
 import 'package:bio/seq.dart' as seq;
-import 'package:bio/utils.dart' as utils;
 import 'package:args/command_runner.dart';
 
 void main(List<String> arguments) {
@@ -40,6 +39,7 @@ class SeqCommand extends Command {
         fastaLineLength: int.parse(argResults['fasta-line-length']),
         subset: argResults['subset'],
         sample: int.parse(argResults['sample']),
+        randomSeed: int.parse(argResults['random-seed']),
         verbose: argResults['verbose'],
         overwrite: argResults['overwrite']);
   }
