@@ -31,3 +31,45 @@ void fileIsNotExist(String filename) {
     exit(1);
   }
 }
+
+//var baseReverserLower =
+//    baseReverserUpper.map((k, v) => MapEntry(k.toLowerCase(), v.toLowerCase()));
+
+const baseReverser = {
+  'A': 'T',
+  'B': 'V',
+  'C': 'G',
+  'D': 'H',
+  'G': 'C',
+  'H': 'D',
+  'K': 'M',
+  'M': 'K',
+  'N': 'N',
+  'R': 'Y',
+  'S': 'S',
+  'T': 'A',
+  'U': 'A',
+  'V': 'B',
+  'Y': 'R',
+  'W': 'W',
+  'a': 't',
+  'b': 'v',
+  'c': 'g',
+  'd': 'h',
+  'g': 'c',
+  'h': 'd',
+  'k': 'm',
+  'm': 'k',
+  'n': 'n',
+  'r': 'y',
+  's': 's',
+  't': 'a',
+  'u': 'a',
+  'v': 'b',
+  'y': 'r',
+  'w': 'w'
+};
+
+String reverseComplement(String sequence) {
+  return sequence.split('').reversed.map((i) => baseReverser[i]).join('');
+}

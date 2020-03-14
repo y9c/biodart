@@ -39,7 +39,8 @@ class SeqCommand extends Command {
         fastaLineLength: int.parse(argResults['fasta-line-length']),
         subset: argResults['subset'],
         sample: int.parse(argResults['sample']),
-        randomSeed: int.parse(argResults['random-seed']),
+        randomSeed: int.tryParse(argResults['random-seed']),
+        revCom: argResults['reverse-complement'],
         verbose: argResults['verbose'],
         overwrite: argResults['overwrite']);
   }
@@ -61,7 +62,9 @@ class SeqCommand extends Command {
           defaultsTo: '0',
           help: 'Random subsample records by number')
       ..addOption('random-seed',
-          help: 'Random seed used for subsampling')
+          defaultsTo: 'null', help: 'Random seed used for subsampling')
+      ..addFlag('reverse-complement',
+          help: 'Reverse complement the sequence of each record')
       ..addFlag('verbose', abbr: 'v')
       ..addFlag('overwrite', abbr: 'f');
   }

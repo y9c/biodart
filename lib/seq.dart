@@ -17,6 +17,15 @@ class Seq {
 
   //String toString() {}
 
+  void reverseComplement() {
+    if (sequence != null) {
+      sequence = utils.reverseComplement(sequence);
+    }
+    if (quality != null) {
+      quality = quality.split('').reversed.join();
+    }
+  }
+
   String toFaString({int lineLength}) {
     if (lineLength <= 0) {
       return '>${name}\n${sequence}\n';
@@ -134,6 +143,7 @@ void seqIO(String inputFile, String outputFile,
     String subset,
     int sample,
     int randomSeed,
+    bool revCom = false,
     bool verbose = false,
     bool overwrite = false}) async {
   final log = utils.logger('bio:Seq', verbose: verbose);
@@ -189,6 +199,10 @@ void seqIO(String inputFile, String outputFile,
     inputStream = inputStream.where((s) => subsetNames.contains(s.name));
   }
   if (sample > 0) {
+    if (subset != null) {
+      log.warning('Random sampling can not be used along with `--subset/-n`');
+      exit(1);
+    }
     var lineCount = countFq(infile);
     if (sample <= lineCount) {
       Random random;
@@ -201,6 +215,7 @@ void seqIO(String inputFile, String outputFile,
       while (sampleIndex.length < sample) {
         sampleIndex.add(random.nextInt(lineCount));
       }
+      print(sampleIndex);
       var elementIndex = 0;
       inputStream = inputStream.where((s) {
         var isSelected = sampleIndex.contains(elementIndex);
@@ -208,6 +223,11 @@ void seqIO(String inputFile, String outputFile,
         return isSelected;
       });
     }
+  }
+
+  // edit record
+  if (revCom) {
+    inputStream = inputStream.map((s) => s..reverseComplement());
   }
 
   // Wrtie Stream<Seq> into file
