@@ -40,7 +40,7 @@ class Seq {
 
 final log = utils.logger('bio:Seq');
 
-/// Read Fasta File
+/// Read Fasta File as Stream
 Stream<Seq> readFa(File file) async* {
   final lines =
       file.openRead().transform(utf8.decoder).transform(LineSplitter());
@@ -66,7 +66,18 @@ Stream<Seq> readFa(File file) async* {
   log.info('finish reading fasta file~');
 }
 
-/// Read Fastq File
+/// Count number of records in fasta file
+int countFa(File file) {
+  var count = 0;
+  for (var line in file.readAsLinesSync()) {
+    if (line.startsWith('>')) {
+      count++;
+    }
+  }
+  return count;
+}
+
+/// Read Fastq File as Stream
 Stream<Seq> readFq(File file) async* {
   final lines =
       file.openRead().transform(utf8.decoder).transform(LineSplitter());
@@ -89,6 +100,15 @@ Stream<Seq> readFq(File file) async* {
   log.info('finish reading fastq file~');
 }
 
+/// Count number of records in fasta file
+int countFq(File file) {
+  var count = 0;
+  for (var _ in file.readAsLinesSync()) {
+    count++;
+  }
+  return count ~/= 4;
+}
+
 void stream2File(Stream<Seq> seqStream, File outfile, String outputFormat,
     {int lineLength = 0}) {
   var outwrite = outfile.openWrite();
@@ -105,14 +125,17 @@ void stream2File(Stream<Seq> seqStream, File outfile, String outputFormat,
 }
 
 /// convert formats
-/// subset sequence
+/// [--subset] subset sequence by name.list
+/// [--sample] subsample sequence by number of records
 void seqIO(String inputFile, String outputFile,
     {String inputFormat,
     String outputFormat,
     int fastaLineLength,
     String subset,
+    int sample,
+    int randomSeed,
     bool verbose = false,
-    bool overwrite = false}) {
+    bool overwrite = false}) async {
   final log = utils.logger('bio:Seq', verbose: verbose);
 
   // TODO: put file format checker into better place
@@ -157,10 +180,34 @@ void seqIO(String inputFile, String outputFile,
     exit(1);
   }
 
+  // var castStream = inputStream.asBroadcastStream();
+  // castStream.length.then((value) => print("stream.length: $value"));
+
   // filter Stream<Seq>
   if (subset != null) {
     var subsetNames = File(subset).readAsLinesSync();
     inputStream = inputStream.where((s) => subsetNames.contains(s.name));
+  }
+  if (sample > 0) {
+    var lineCount = countFq(infile);
+    if (sample <= lineCount) {
+      Random random;
+      if (randomSeed == null) {
+        random = Random();
+      } else {
+        random = Random(randomSeed);
+      }
+      var sampleIndex = <int>{};
+      while (sampleIndex.length < sample) {
+        sampleIndex.add(random.nextInt(lineCount));
+      }
+      var elementIndex = 0;
+      inputStream = inputStream.where((s) {
+        var isSelected = sampleIndex.contains(elementIndex);
+        elementIndex++;
+        return isSelected;
+      });
+    }
   }
 
   // Wrtie Stream<Seq> into file

@@ -39,6 +39,7 @@ class SeqCommand extends Command {
         outputFormat: argResults['output-format'],
         fastaLineLength: int.parse(argResults['fasta-line-length']),
         subset: argResults['subset'],
+        sample: int.parse(argResults['sample']),
         verbose: argResults['verbose'],
         overwrite: argResults['overwrite']);
   }
@@ -55,6 +56,12 @@ class SeqCommand extends Command {
           abbr: 'l', defaultsTo: '0', help: 'Number of charaters in each line')
       ..addOption('subset',
           abbr: 'n', help: 'Extract sequences with names in file `name.list`')
+      ..addOption('sample',
+          abbr: 'r',
+          defaultsTo: '0',
+          help: 'Random subsample records by number')
+      ..addOption('random-seed',
+          help: 'Random seed used for subsampling')
       ..addFlag('verbose', abbr: 'v')
       ..addFlag('overwrite', abbr: 'f');
   }

@@ -3,6 +3,7 @@
 - support parsing multiline fasta format
 - format line length of fasta output
 - subset sequence by name list
+- random sample sequences
 
 ## 0.0.0
 
