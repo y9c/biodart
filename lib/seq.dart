@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'dart:math';
 import 'package:bio/utils.dart' as utils;
 
 class Seq {
@@ -16,8 +17,20 @@ class Seq {
 
   //String toString() {}
 
-  String toFaString() {
-    return '>${name}\n${sequence}\n';
+  String toFaString({int lineLength}) {
+    if (lineLength <= 0) {
+      return '>${name}\n${sequence}\n';
+    }
+    var leftLenght = sequence.length;
+    var leftSequence = sequence;
+    var formatedSequence = '';
+    while (leftLenght > 0) {
+      var cutAt = min(leftLenght, lineLength);
+      formatedSequence += leftSequence.substring(0, cutAt) + '\n';
+      leftSequence = leftSequence.substring(cutAt);
+      leftLenght -= lineLength;
+    }
+    return '>${name}\n${formatedSequence}';
   }
 
   String toFqString() {
@@ -66,7 +79,7 @@ Stream<Seq> readFq(File file) async* {
     if (lineCounter % 4 == 1) {
       name = line.replaceFirst('@', '');
     } else if (lineCounter % 4 == 2) {
-      sequence = line;
+      sequence = line.replaceAll(' ', '');
     } else if (lineCounter % 4 == 0) {
       quality = line;
       var s = Seq(name, sequence: sequence, quality: quality);
@@ -80,6 +93,7 @@ Stream<Seq> readFq(File file) async* {
 void convert(String inputFile, String outputFile,
     {String inputFormat,
     String outputFormat,
+    int fastaLineLength,
     bool verbose = false,
     bool overwrite = false}) {
   final log = utils.logger('bio:Seq', verbose: verbose);
@@ -88,6 +102,7 @@ void convert(String inputFile, String outputFile,
   inputFormat ??= inputFile.split('.').last;
   outputFormat ??= outputFile.split('.').last;
 
+  utils.fileIsExist(inputFile);
   final infile = File(inputFile);
   final outfile = File(outputFile);
   if (outfile.existsSync() && !overwrite) {
@@ -108,7 +123,7 @@ void convert(String inputFile, String outputFile,
   }
   inputStream.listen((Seq s) {
     if (outputFormat == 'fa') {
-      outwrite.write(s.toFaString());
+      outwrite.write(s.toFaString(lineLength: fastaLineLength));
     } else if (outputFormat == 'fq') {
       outwrite.write(s.toFqString());
     } else {

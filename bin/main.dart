@@ -37,17 +37,21 @@ class SeqCommand extends Command {
     seq.convert(argResults['input'], argResults['output'],
         inputFormat: argResults['input-format'],
         outputFormat: argResults['output-format'],
+        fastaLineLength: int.parse(argResults['fasta-line-length']),
         verbose: argResults['verbose'],
         overwrite: argResults['overwrite']);
   }
 
   SeqCommand() {
     argParser
-      ..addOption('input',
-          abbr: 'i', callback: (file) => utils.fileIsExist(file))
-      ..addOption('output', abbr: 'o')
-      ..addOption('input-format', abbr: 's')
-      ..addOption('output-format', abbr: 't')
+      ..addOption('input', abbr: 'i', help: 'Path of input file')
+      ..addOption('output', abbr: 'o', help: 'Path of output file')
+      ..addOption('input-format',
+          abbr: 's', help: 'Format of input file', valueHelp: 'auto')
+      ..addOption('output-format',
+          abbr: 't', help: 'Format of output file', valueHelp: 'auto')
+      ..addOption('fasta-line-length',
+          abbr: 'l', defaultsTo: '0', help: 'Number of charaters in each line')
       ..addFlag('verbose', abbr: 'v')
       ..addFlag('overwrite', abbr: 'f');
   }
