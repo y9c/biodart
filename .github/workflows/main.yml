@@ -20,14 +20,11 @@ jobs:
             output-name: hello-windows.exe
 
     steps:
-      - uses: actions/checkout@v2
-        
+      - uses: actions/checkout@v1
       - uses: DanTup/gh-actions/setup-dart@master
       - run: mkdir build
-      
       - run: dart2native bin/main.dart -v -o build/${{ matrix.output-name }}
-        
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v1
         with:
           name: native-executables
           path: build
