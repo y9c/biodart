@@ -1,8 +1,6 @@
 name: Build on Push
 
-on:
-  push:
-    branches: [ master ]
+on: [push]
 
 jobs:
   build:
@@ -13,15 +11,16 @@ jobs:
         os: [ubuntu-latest, windows-latest, macOS-latest]
         include:
           - os: ubuntu-latest
-            output-name: hello-linux
+            output-name: bio
           - os: macOS-latest
-            output-name: hello-mac
+            output-name: bio
           - os: windows-latest
-            output-name: hello-windows.exe
+            output-name: bio.exe
 
     steps:
       - uses: actions/checkout@v1
       - uses: DanTup/gh-actions/setup-dart@master
+      - run: pub get
       - run: mkdir build
       - run: dart2native bin/main.dart -v -o build/${{ matrix.output-name }}
       - uses: actions/upload-artifact@v1
