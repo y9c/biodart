@@ -1,6 +1,6 @@
 name: bio
 description: "Some useful command line utils written in Dart. For parsing and manipulating sequence records in various formats..."
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/yech1990/biodart
 
 environment:

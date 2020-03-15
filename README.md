@@ -1,35 +1,40 @@
 # bio
 
-> Dart Package for Bioinformatics.
+**Dart Package for Bioinformatics.**
 
 ## USAGE
 
-- convert fasta into fastq
+### SeqIO
+
+- convert fastq into fasta
 
   ```bash
-  bio seq xxxx
+  bio seq --input ./data/seq.fq --output ./data/seq.fa
   ```
 
 - format fasta with max number of characters per line
 
   ```bash
-  bio seq xxxx
+  bio seq --input ./data/seq.fq --output ./data/seq_formated.fa --fasta-line-length 20
   ```
 
 - subset records with list of names
 
   ```bash
-  bio seq xxxx
+  bio seq --input ./data/seq.fq --output ./data/seq_subset.fa --filter-names ./data/name.list
   ```
 
 - subsamples N records
 
   ```bash
-  bio seq xxxx
+  bio seq --input ./data/seq.fq --output ./data/seq_sampled.fa --sample 2 --sample-seed 123
   ```
 
-- shuffle records (N = number of lines)
+- trim DNA records
 
   ```bash
-  bio seq xxxx
+  bio seq --input ./data/seq.fq --output ./data/seq_sample.fa --trim-start 6 --trim-end 3
   ```
+
+### Phylo
+

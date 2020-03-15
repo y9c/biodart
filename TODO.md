@@ -1,3 +1,6 @@
-- split record name and record description
-- support multiple line fastq?
-- trim low quality base
+- [ ] split record name and record description
+- [ ] support multiple line fastq?
+- [ ] trim low quality base
+- [ ] read phylogenetic file format
+- [ ] population genetic calculator
+- [ ] support degenerate bases matching

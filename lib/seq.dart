@@ -15,7 +15,27 @@ class Seq {
     this.quality = quality;
   }
 
-  //String toString() {}
+  bool hasMotif(String motif) {
+    return sequence.contains(motif);
+  }
+
+  void trimStart(int trimNum) {
+    if (sequence != null) {
+      sequence = sequence.substring(trimNum);
+    }
+    if (quality != null) {
+      quality = quality.substring(trimNum);
+    }
+  }
+
+  void trimEnd(int trimNum) {
+    if (sequence != null) {
+      sequence = sequence.substring(0, sequence.length - trimNum);
+    }
+    if (quality != null) {
+      quality = quality.substring(0, sequence.length - trimNum);
+    }
+  }
 
   void reverseComplement() {
     if (sequence != null) {
@@ -25,6 +45,8 @@ class Seq {
       quality = quality.split('').reversed.join();
     }
   }
+
+  //String toString() {}
 
   String toFaString({int lineLength}) {
     if (lineLength <= 0) {
@@ -133,16 +155,19 @@ void stream2File(Stream<Seq> seqStream, File outfile, String outputFormat,
   });
 }
 
-/// convert formats
-/// [--subset] subset sequence by name.list
-/// [--sample] subsample sequence by number of records
+/// read and write
+/// filter sequence
+/// manipulate sequence
 void seqIO(String inputFile, String outputFile,
     {String inputFormat,
     String outputFormat,
     int fastaLineLength,
-    String subset,
     int sample,
     int randomSeed,
+    String filterNames,
+    String filterMotif,
+    int trimStart,
+    int trimEnd,
     bool revCom = false,
     bool verbose = false,
     bool overwrite = false}) async {
@@ -194,15 +219,19 @@ void seqIO(String inputFile, String outputFile,
   // castStream.length.then((value) => print("stream.length: $value"));
 
   // filter Stream<Seq>
-  if (subset != null) {
-    var subsetNames = File(subset).readAsLinesSync();
-    inputStream = inputStream.where((s) => subsetNames.contains(s.name));
-  }
   if (sample > 0) {
-    if (subset != null) {
-      log.warning('Random sampling can not be used along with `--subset/-n`');
+    // sampling is not compatable with filtering
+    if (filterNames != null) {
+      log.warning(
+          'Random sampling can not be used along with `--filterNames/-n`');
       exit(1);
     }
+    if (filterMotif != null) {
+      log.warning(
+          'Random sampling can not be used along with `--filterMotif/-m`');
+      exit(1);
+    }
+    // random sampling
     var lineCount = countFq(infile);
     if (sample <= lineCount) {
       Random random;
@@ -224,10 +253,23 @@ void seqIO(String inputFile, String outputFile,
       });
     }
   }
+  if (filterNames != null) {
+    var subsetNames = File(filterNames).readAsLinesSync();
+    inputStream = inputStream.where((s) => subsetNames.contains(s.name));
+  }
+  if (filterMotif != null) {
+    inputStream = inputStream.where((s) => s.hasMotif(filterMotif));
+  }
 
   // edit record
   if (revCom) {
     inputStream = inputStream.map((s) => s..reverseComplement());
+  }
+  if (trimStart > 0) {
+    inputStream = inputStream.map((s) => s..trimStart(trimStart));
+  }
+  if (trimEnd > 0) {
+    inputStream = inputStream.map((s) => s..trimEnd(trimEnd));
   }
 
   // Wrtie Stream<Seq> into file

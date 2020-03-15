@@ -1,3 +1,9 @@
+## 0.0.3
+
+- filter sequence by motif (`--filter-motif`)
+- filter sequence by name (`--filter-names`)
+- trim sequence at both end (`--trim-start` & `--trim-end`)
+
 ## 0.0.2
 
 - fix pub.dev warning

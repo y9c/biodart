@@ -1,11 +1,13 @@
 import 'package:bio/bio.dart' as bio;
 import 'package:bio/seq.dart' as seq;
+import 'package:bio/phylo.dart' as phylo;
 import 'package:args/command_runner.dart';
 
 void main(List<String> arguments) {
   var runner = CommandRunner('git', 'Distributed version control.')
     ..addCommand(HelloCommand())
-    ..addCommand(SeqCommand());
+    ..addCommand(SeqCommand())
+    ..addCommand(PhyloCommand());
 
   runner.run(arguments);
 }
@@ -37,9 +39,12 @@ class SeqCommand extends Command {
         inputFormat: argResults['input-format'],
         outputFormat: argResults['output-format'],
         fastaLineLength: int.parse(argResults['fasta-line-length']),
-        subset: argResults['subset'],
         sample: int.parse(argResults['sample']),
-        randomSeed: int.tryParse(argResults['random-seed']),
+        randomSeed: int.tryParse(argResults['sample-seed']),
+        filterNames: argResults['filter-names'],
+        filterMotif: argResults['filter-motif'],
+        trimStart: int.parse(argResults['trim-start']),
+        trimEnd: int.parse(argResults['trim-end']),
         revCom: argResults['reverse-complement'],
         verbose: argResults['verbose'],
         overwrite: argResults['overwrite']);
@@ -55,17 +60,46 @@ class SeqCommand extends Command {
           abbr: 't', help: 'Format of output file', valueHelp: 'auto')
       ..addOption('fasta-line-length',
           abbr: 'l', defaultsTo: '0', help: 'Number of charaters in each line')
-      ..addOption('subset',
-          abbr: 'n', help: 'Extract sequences with names in file `name.list`')
       ..addOption('sample',
           abbr: 'r',
           defaultsTo: '0',
           help: 'Random subsample records by number')
-      ..addOption('random-seed',
+      ..addOption('sample-seed',
           defaultsTo: 'null', help: 'Random seed used for subsampling')
+      ..addOption('filter-names',
+          abbr: 'n', help: 'Extract sequences with names in file `name.list`')
+      ..addOption('filter-motif',
+          abbr: 'm', help: 'Extract sequences that match a motif')
+      ..addOption('trim-start',
+          abbr: '5',
+          defaultsTo: '0',
+          help: 'Trim n bases at the 5\' end.\n'
+              'Also discard sequence that shorter than thresfold.')
+      ..addOption('trim-end',
+          abbr: '3',
+          defaultsTo: '0',
+          help: 'Trim n bases at the 3\' end.\n'
+              'Also discard sequence that shorter than thresfold.')
       ..addFlag('reverse-complement',
           help: 'Reverse complement the sequence of each record')
       ..addFlag('verbose', abbr: 'v')
       ..addFlag('overwrite', abbr: 'f');
+  }
+}
+
+class PhyloCommand extends Command {
+  @override
+  final name = 'phylo';
+  @override
+  final description = 'Deal with phylogentics data.';
+  @override
+  void run() {
+    phylo.phylo();
+  }
+
+  PhyloCommand() {
+    argParser
+      ..addOption('input', abbr: 'i', help: 'Path of input file')
+      ..addOption('output', abbr: 'o', help: 'Path of output file');
   }
 }
