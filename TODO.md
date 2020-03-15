@@ -1,3 +1,4 @@
+- [x] support stdin and stdout
 - [ ] split record name and record description
 - [ ] support multiple line fastq?
 - [ ] trim low quality base

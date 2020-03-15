@@ -71,10 +71,8 @@ class Seq {
 
 final log = utils.logger('bio:Seq');
 
-/// Read Fasta File as Stream
-Stream<Seq> readFa(File file) async* {
-  final lines =
-      file.openRead().transform(utf8.decoder).transform(LineSplitter());
+/// Stream<String> in Fasta(.fa) format into Stream<Seq>
+Stream<Seq> _faStringStream2SeqStream(Stream<String> lines) async* {
   var recordCounter = 0;
   Seq s;
   String name;
@@ -97,21 +95,8 @@ Stream<Seq> readFa(File file) async* {
   log.info('finish reading fasta file~');
 }
 
-/// Count number of records in fasta file
-int countFa(File file) {
-  var count = 0;
-  for (var line in file.readAsLinesSync()) {
-    if (line.startsWith('>')) {
-      count++;
-    }
-  }
-  return count;
-}
-
-/// Read Fastq File as Stream
-Stream<Seq> readFq(File file) async* {
-  final lines =
-      file.openRead().transform(utf8.decoder).transform(LineSplitter());
+/// Stream<String> in Fastq(.fq) format into Stream<Seq>
+Stream<Seq> _fqStringStream2SeqStream(Stream<String> lines) async* {
   var lineCounter = 0;
   String name;
   String sequence;
@@ -131,15 +116,24 @@ Stream<Seq> readFq(File file) async* {
   log.info('finish reading fastq file~');
 }
 
-/// Count number of records in fasta file
-int countFq(File file) {
-  var count = 0;
-  for (var _ in file.readAsLinesSync()) {
-    count++;
+/// Read file as Stream<Seq>
+Stream<Seq> file2Stream(File file, String format) {
+  // Read file as Stream<String>
+  var lines = file.openRead().transform(utf8.decoder).transform(LineSplitter());
+  // parse Stream<String> into Stream<Seq>
+  Stream<Seq> s;
+  if (format == 'fa') {
+    s = _faStringStream2SeqStream(lines);
+  } else if (format == 'fq') {
+    s = _fqStringStream2SeqStream(lines);
+  } else {
+    log.warning('${format} format is not supported!');
+    exit(1);
   }
-  return count ~/= 4;
+  return s;
 }
 
+/// Write Stream<Seq> as file
 void stream2File(Stream<Seq> seqStream, File outfile, String outputFormat,
     {int lineLength = 0}) {
   var outwrite = outfile.openWrite();
@@ -155,14 +149,36 @@ void stream2File(Stream<Seq> seqStream, File outfile, String outputFormat,
   });
 }
 
+/// Count number of records in fasta file
+int countFa(File file) {
+  var count = 0;
+  for (var line in file.readAsLinesSync()) {
+    if (line.startsWith('>')) {
+      count++;
+    }
+  }
+  return count;
+}
+
+/// Count number of records in fasta file
+int countFq(File file) {
+  var count = 0;
+  for (var _ in file.readAsLinesSync()) {
+    count++;
+  }
+  return count ~/= 4;
+}
+
 /// read and write
 /// filter sequence
 /// manipulate sequence
-void seqIO(String inputFile, String outputFile,
-    {String inputFormat,
+void seqIO(
+    {String inputFile,
+    String outputFile,
+    String inputFormat,
     String outputFormat,
     int fastaLineLength,
-    int sample,
+    int sample = 0,
     int randomSeed,
     String filterNames,
     String filterMotif,
@@ -173,6 +189,24 @@ void seqIO(String inputFile, String outputFile,
     bool overwrite = false}) async {
   final log = utils.logger('bio:Seq', verbose: verbose);
 
+  // precheck argument compatable
+  if (inputFile == '-') {
+    inputFile = '/dev/stdin';
+  }
+  if (outputFile == '-') {
+    outputFile = '/dev/stdout';
+    overwrite = true;
+  }
+  final infile = File(inputFile);
+  if (!infile.existsSync()) {
+    log.warning('${infile.path} does not exist');
+    exit(1);
+  }
+  final outfile = File(outputFile);
+  if (outfile.existsSync() && !overwrite) {
+    log.warning('${outfile.path} has exist, your may try to overwrite!');
+    exit(1);
+  }
   // TODO: put file format checker into better place
   var supportedFormats = {
     'fa': 'fa',
@@ -196,24 +230,8 @@ void seqIO(String inputFile, String outputFile,
     exit(1);
   }
 
-  final infile = File(inputFile);
-  utils.fileIsExist(inputFile);
-  final outfile = File(outputFile);
-  if (outfile.existsSync() && !overwrite) {
-    log.warning('${outfile.path} has exist, your may try to overwrite!');
-    exit(1);
-  }
-
   // Read file as Stream<Seq>
-  Stream<Seq> inputStream;
-  if (inputFormat == 'fa') {
-    inputStream = readFa(infile);
-  } else if (inputFormat == 'fq') {
-    inputStream = readFq(infile);
-  } else {
-    log.warning('${inputFormat} format is not supported!');
-    exit(1);
-  }
+  var inputStream = file2Stream(infile, inputFormat);
 
   // var castStream = inputStream.asBroadcastStream();
   // castStream.length.then((value) => print("stream.length: $value"));

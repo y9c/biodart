@@ -35,7 +35,9 @@ class SeqCommand extends Command {
   final description = 'Deal with sequence file in various formats.';
   @override
   void run() {
-    seq.seqIO(argResults['input'], argResults['output'],
+    seq.seqIO(
+        inputFile: argResults['input'],
+        outputFile: argResults['output'],
         inputFormat: argResults['input-format'],
         outputFormat: argResults['output-format'],
         fastaLineLength: int.parse(argResults['fasta-line-length']),
@@ -52,8 +54,10 @@ class SeqCommand extends Command {
 
   SeqCommand() {
     argParser
-      ..addOption('input', abbr: 'i', help: 'Path of input file')
-      ..addOption('output', abbr: 'o', help: 'Path of output file')
+      ..addOption('input',
+          abbr: 'i', defaultsTo: '-', valueHelp: 'Path of input file')
+      ..addOption('output',
+          abbr: 'o', defaultsTo: '-', valueHelp: 'Path of output file')
       ..addOption('input-format',
           abbr: 's', help: 'Format of input file', valueHelp: 'auto')
       ..addOption('output-format',

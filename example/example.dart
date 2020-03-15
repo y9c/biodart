@@ -9,8 +9,8 @@ import 'package:bio/seq.dart' as seq;
 
 void main() {
   seq.seqIO(
-    'data/seq.fq',
-    'data/seq.test',
+    inputFile: 'data/seq.fq',
+    outputFile: 'data/seq.test',
     inputFormat: 'fq',
     outputFormat: 'fa',
     fastaLineLength: 20,
