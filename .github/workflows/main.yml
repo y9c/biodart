@@ -29,11 +29,6 @@ jobs:
           pub get
           mkdir build
           dart2native bin/main.dart -v -o build/${{ matrix.output-name }}
-      - name: Build binary
-      - uses: actions/upload-artifact@v1
-        with:
-          name: native-executables
-          path: build
       - name: Create Release
         uses: actions/create-release@latest
         env:
@@ -50,6 +45,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./my-artifact.zip
-          asset_name: my-artifact.zip
+          asset_path: build/${{ matrix.output-name }}
+          asset_name: build/${{ matrix.output-name }}
           asset_content_type: application/zip
