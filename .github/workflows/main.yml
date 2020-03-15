@@ -1,11 +1,14 @@
 name: Build on Push
 
-on: [push]
+on:
+  push:
+    tags:
+      - "v*"
 
 jobs:
   build:
+    name: Build and Release Binary
     runs-on: ${{ matrix.os }}
-
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
@@ -16,14 +19,37 @@ jobs:
             output-name: bio
           - os: windows-latest
             output-name: bio.exe
-
     steps:
-      - uses: actions/checkout@v1
-      - uses: DanTup/gh-actions/setup-dart@master
-      - run: pub get
-      - run: mkdir build
-      - run: dart2native bin/main.dart -v -o build/${{ matrix.output-name }}
+      - name: Checkout code
+        uses: actions/checkout@master
+      - name: Prepare dart env
+        uses: DanTup/gh-actions/setup-dart@master
+      - name: Build binary
+        run: |
+          pub get
+          mkdir build
+          dart2native bin/main.dart -v -o build/${{ matrix.output-name }}
+      - name: Build binary
       - uses: actions/upload-artifact@v1
         with:
           name: native-executables
           path: build
+      - name: Create Release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./my-artifact.zip
+          asset_name: my-artifact.zip
+          asset_content_type: application/zip
