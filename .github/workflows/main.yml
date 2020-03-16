@@ -15,16 +15,21 @@ jobs:
         include:
           - os: ubuntu-latest
             output-name: bio
-            release-name: bio-linux.zip
+            release-name: bio-linux
           - os: macOS-latest
             output-name: bio
-            release-name: bio-macOS.zip
+            release-name: bio-mac
           - os: windows-latest
             output-name: bio.exe
-            release-name: bio-windows.zip
+            release-name: bio-win
     steps:
       - name: Checkout code
         uses: actions/checkout@master
+
+     # Install OS specific dependencies
+     - name: Install macOS dependencies
+       if: matrix.os == 'macOS-latest'
+       run: brew p7zip
 
       - name: Prepare dart env
         uses: DanTup/gh-actions/setup-dart@master
@@ -35,7 +40,7 @@ jobs:
           mkdir build
           dart2native bin/main.dart -v -o build/${{ matrix.output-name }}
           mkdir release
-          zip release/${{ matrix.release-name }} build/${{ matrix.output-name }}
+          7z release/${{ matrix.release-name }}.7z build/${{ matrix.output-name }}
 
       - name: Create Release
         uses: xresloader/upload-to-github-release@v1
