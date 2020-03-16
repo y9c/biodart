@@ -33,7 +33,7 @@ jobs:
           dart2native bin/main.dart -v -o build/${{ matrix.output-name }}
 
       - name: Create Release
-        uses: xresloader/upload-to-github-release@v1
+        uses: xresloader/upload-to-github-release@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
