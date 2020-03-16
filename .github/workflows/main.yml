@@ -39,7 +39,7 @@ jobs:
           mkdir build
           dart2native bin/main.dart -v -o build/${{ matrix.output-name }}
           mkdir release
-          7z release/${{ matrix.release-name }}.7z build/${{ matrix.output-name }}
+          7z a release/${{ matrix.release-name }}.7z build/${{ matrix.output-name }}
 
       - name: Create Release
         uses: xresloader/upload-to-github-release@v1
