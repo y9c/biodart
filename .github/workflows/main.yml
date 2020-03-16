@@ -14,14 +14,17 @@ jobs:
         os: [ubuntu-latest, windows-latest, macOS-latest]
         include:
           - os: ubuntu-latest
-            output-name: bio
+            output-name: linux/bio
           - os: macOS-latest
-            output-name: bio
+            output-name: macOS/bio
           - os: windows-latest
-            output-name: bio.exe
+            output-name: windows/bio.exe
     steps:
       - name: Checkout code
         uses: actions/checkout@master
+
+      - name: Set env
+        run: echo ::set-env name=RELEASE_VERSION::${GITHUB_REF:10}
 
       - name: Prepare dart env
         uses: DanTup/gh-actions/setup-dart@master
@@ -31,6 +34,11 @@ jobs:
           pub get
           mkdir build
           dart2native bin/main.dart -v -o build/${{ matrix.output-name }}
+          mkdir release
+          tar zcvf bio-${{ env.RELEASE_VERSION }}-linux.tar.gz build/linux/bio
+          zip bio-${{ env.RELEASE_VERSION }}-macOS.tar.gz build/macOS/bio
+          zip bio-${{ env.RELEASE_VERSION }}-windows.tar.gz build/windows/bio.exe
+
 
       - name: Create Release
         uses: xresloader/upload-to-github-release@latest
