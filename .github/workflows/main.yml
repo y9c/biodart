@@ -26,9 +26,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@master
 
-     - name: Install macOS dependencies
-       if: matrix.os == 'macOS-latest'
-       run: brew p7zip
+      - name: Install macOS dependencies
+        if: matrix.os == 'macOS-latest'
+        run: brew install p7zip
 
       - name: Prepare dart env
         uses: DanTup/gh-actions/setup-dart@master
