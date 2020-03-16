@@ -1,6 +1,6 @@
 # bio
 
-**Dart Package for Bioinformatics.**
+Functions and command line tools for biological computation written in **Dart**.
 
 ## USAGE
 
@@ -9,7 +9,9 @@
 
 ## DOCUMENTATION
 
-### SeqIO
+### seq (Seq)
+
+#### seqIO
 
 - convert fastq into fasta
 
@@ -41,5 +43,10 @@
   bio seq --input ./data/seq.fq --output ./data/seq_sample.fa --trim-start 6 --trim-end 3
   ```
 
-### Phylo
+#### alignIO
 
+### phylo (Phylo)
+
+#### treeIO
+
+### popgen
