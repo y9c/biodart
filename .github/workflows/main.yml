@@ -35,9 +35,9 @@ jobs:
           mkdir build
           dart2native bin/main.dart -v -o build/${{ matrix.output-name }}
           mkdir release
-          tar zcvf bio-${{ env.RELEASE_VERSION }}-linux.tar.gz build/linux/bio
-          zip bio-${{ env.RELEASE_VERSION }}-macOS.tar.gz build/macOS/bio
-          zip bio-${{ env.RELEASE_VERSION }}-windows.tar.gz build/windows/bio.exe
+          tar zcvf release/bio-${{ env.RELEASE_VERSION }}-linux.tar.gz build/linux/bio
+          zip release/bio-${{ env.RELEASE_VERSION }}-macOS.tar.gz build/macOS/bio
+          zip release/bio-${{ env.RELEASE_VERSION }}-windows.tar.gz build/windows/bio.exe
 
 
       - name: Create Release
@@ -45,6 +45,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          file: build/*
+          file: release/*
           tags: true
           draft: false
