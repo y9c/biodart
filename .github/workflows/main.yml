@@ -15,16 +15,16 @@ jobs:
         include:
           - os: ubuntu-latest
             output-name: linux/bio
+            release-name: bio-linux.zip
           - os: macOS-latest
             output-name: macOS/bio
+            release-name: bio-macOS.zip
           - os: windows-latest
             output-name: windows/bio.exe
+            release-name: bio-windows.zip
     steps:
       - name: Checkout code
         uses: actions/checkout@master
-
-      - name: Set env
-        run: echo ::set-env name=RELEASE_VERSION::${GITHUB_REF:10}
 
       - name: Prepare dart env
         uses: DanTup/gh-actions/setup-dart@master
@@ -35,13 +35,10 @@ jobs:
           mkdir build
           dart2native bin/main.dart -v -o build/${{ matrix.output-name }}
           mkdir release
-          tar zcvf release/bio-${{ env.RELEASE_VERSION }}-linux.tar.gz build/linux/bio
-          zip release/bio-${{ env.RELEASE_VERSION }}-macOS.tar.gz build/macOS/bio
-          zip release/bio-${{ env.RELEASE_VERSION }}-windows.tar.gz build/windows/bio.exe
-
+          zip release/${{ matrix.release-name }} build/${{ matrix.output-name }}
 
       - name: Create Release
-        uses: xresloader/upload-to-github-release@latest
+        uses: xresloader/upload-to-github-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
