@@ -293,3 +293,7 @@ void seqIO(
   // Wrtie Stream<Seq> into file
   stream2File(inputStream, outfile, outputFormat, lineLength: fastaLineLength);
 }
+
+void alignIO() {
+  log.info('running alignIO...');
+}

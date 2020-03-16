@@ -3,6 +3,6 @@ import 'package:test/test.dart';
 
 void main() {
   test('phylo', () {
-    expect(phylo(), 0);
+    expect(phyloIO(), 0);
   });
 }

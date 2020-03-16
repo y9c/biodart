@@ -4,6 +4,11 @@
 
 ## USAGE
 
+- Add `bio` in pubspec.yaml
+- Download binary from [release](https://github.com/yech1990/biodart/releases)
+
+## DOCUMENTATION
+
 ### SeqIO
 
 - convert fastq into fasta

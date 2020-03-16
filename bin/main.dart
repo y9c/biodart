@@ -98,7 +98,7 @@ class PhyloCommand extends Command {
   final description = 'Deal with phylogentics data.';
   @override
   void run() {
-    phylo.phylo();
+    phylo.phyloIO();
   }
 
   PhyloCommand() {
