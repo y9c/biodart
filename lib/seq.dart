@@ -1,6 +1,6 @@
-import 'dart:io';
-import 'dart:convert';
-import 'dart:math';
+import 'dart:io' show File, exit;
+import 'dart:convert' show LineSplitter, utf8;
+import 'dart:math' show Random, min;
 import 'package:bio/utils.dart' as utils;
 
 class Seq {
