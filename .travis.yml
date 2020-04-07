@@ -1,27 +1,19 @@
 language: dart
+
 dart:
   - dev
 
-# Do not remove without verifying w/ Travis.
-sudo: required
+sudo: false
 
-# Build stages: https://docs.travis-ci.com/user/build-stages/.
-stages:
-  - presubmit
+script: dart --version
 
-# 1. Run dartfmt, dartanalyzer.
-jobs:
-  include:
-    # presubmit: Check things that should fail fast(er).
-    - stage: presubmit
-      env: SHARD=dartfmt
-      script: dartfmt -n --set-exit-if-changed . || EXIT_CODE=$?
+env:
+  - LINTER_BOT=main
+  - LINTER_BOT=release
 
-# Only building master means that we don't run two builds for each pull request.
 branches:
   only: [master]
 
-# Incremental pub cache and builds.
 cache:
   directories:
     - $HOME/.pub-cache
