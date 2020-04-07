@@ -1,3 +1,8 @@
+## 0.0.5
+
+- add mdbook for cmd exaamples
+- write dartdoc for functions
+
 ## 0.0.4
 
 - support gz compression format
