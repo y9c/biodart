@@ -1,3 +1,7 @@
+## 0.0.4
+
+- support gz compression format
+
 ## 0.0.3
 
 - filter sequence by motif (`--filter-motif`)

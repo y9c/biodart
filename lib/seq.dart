@@ -1,4 +1,4 @@
-import 'dart:io' show File, exit;
+import 'dart:io' show File, exit, gzip;
 import 'dart:convert' show LineSplitter, utf8;
 import 'dart:math' show Random, min;
 import 'package:bio/utils.dart' as utils;
@@ -117,9 +117,18 @@ Stream<Seq> _fqStringStream2SeqStream(Stream<String> lines) async* {
 }
 
 /// Read file as Stream<Seq>
-Stream<Seq> file2Stream(File file, String format) {
+Stream<Seq> file2Stream(File file, String format, {bool isGzip = false}) {
   // Read file as Stream<String>
-  var lines = file.openRead().transform(utf8.decoder).transform(LineSplitter());
+  Stream<String> lines;
+  if (isGzip) {
+    lines = file
+        .openRead()
+        .transform(gzip.decoder)
+        .transform(utf8.decoder)
+        .transform(LineSplitter());
+  } else {
+    lines = file.openRead().transform(utf8.decoder).transform(LineSplitter());
+  }
   // parse Stream<String> into Stream<Seq>
   Stream<Seq> s;
   if (format == 'fa') {
@@ -175,8 +184,10 @@ int countFq(File file) {
 void seqIO(
     {String inputFile,
     String outputFile,
+    bool inputCompressed,
     String inputFormat,
     String outputFormat,
+    bool outputCompressed,
     int fastaLineLength,
     int sample = 0,
     int randomSeed,
@@ -215,13 +226,23 @@ void seqIO(
     'fastq': 'fq',
     'fq': 'fq'
   };
-  inputFormat ??= inputFile.split('.').last;
+
+  bool isGzip;
+  if (inputFile.split('.').last == 'gz') {
+    isGzip = true;
+    var nameSplited = inputFile.split('.');
+    inputFormat ??= nameSplited[nameSplited.length - 2];
+  } else {
+    isGzip = false;
+    inputFormat ??= inputFile.split('.').last;
+  }
   if (supportedFormats.containsKey(inputFormat)) {
     inputFormat = supportedFormats[inputFormat];
   } else {
     log.warning('${inputFormat} format is not supported!');
     exit(1);
   }
+
   outputFormat ??= outputFile.split('.').last;
   if (supportedFormats.containsKey(outputFormat)) {
     outputFormat = supportedFormats[outputFormat];
@@ -231,7 +252,7 @@ void seqIO(
   }
 
   // Read file as Stream<Seq>
-  var inputStream = file2Stream(infile, inputFormat);
+  var inputStream = file2Stream(infile, inputFormat, isGzip: isGzip);
 
   // var castStream = inputStream.asBroadcastStream();
   // castStream.length.then((value) => print("stream.length: $value"));

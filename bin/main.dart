@@ -40,6 +40,8 @@ class SeqCommand extends Command {
         outputFile: argResults['output'],
         inputFormat: argResults['input-format'],
         outputFormat: argResults['output-format'],
+        inputCompressed: argResults['input-compressed'],
+        outputCompressed: argResults['output-compressed'],
         fastaLineLength: int.parse(argResults['fasta-line-length']),
         sample: int.parse(argResults['sample']),
         randomSeed: int.tryParse(argResults['sample-seed']),
@@ -60,8 +62,12 @@ class SeqCommand extends Command {
           abbr: 'o', defaultsTo: '-', valueHelp: 'Path of output file')
       ..addOption('input-format',
           abbr: 's', help: 'Format of input file', valueHelp: 'auto')
+      ..addOption('input-compressed',
+          help: 'Whether input file is in .gz format', valueHelp: 'auto')
       ..addOption('output-format',
           abbr: 't', help: 'Format of output file', valueHelp: 'auto')
+      ..addOption('output-compressed',
+          help: 'Whether output file is in .gz format', valueHelp: 'auto')
       ..addOption('fasta-line-length',
           abbr: 'l', defaultsTo: '0', help: 'Number of charaters in each line')
       ..addOption('sample',

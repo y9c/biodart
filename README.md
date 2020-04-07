@@ -66,5 +66,9 @@ Functions and command line tools for biological computation written in **Dart**.
 
 ## BENCHMARK
 
-vs. biopython
-vs. seqkit
+| tool            | test IO time | test RC time |
+| --------------- | -----------: | -----------: |
+| biodart         |        6.678 |       15.533 |
+| seqkit (Golang) |        0.996 |        0.879 |
+| seqtk (C)       |        0.849 |        0.854 |
+
