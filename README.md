@@ -2,10 +2,22 @@
 
 Functions and command line tools for biological computation written in **Dart**.
 
+[![CI Status](https://travis-ci.org/yech1990/biodart.svg?branch=master)](https://travis-ci.org/yech1990/biodart)
+[![Release](https://github.com/yech1990/biodart/workflows/Release/badge.svg)](https://github.com/yech1990/biodart/actions)
+[![Publish](https://github.com/yech1990/biodart/workflows/Publish/badge.svg)](https://github.com/yech1990/biodart/actions)
+[![Pub Version](https://img.shields.io/pub/v/bio.svg)](https://pub.dev/packages/bio)
+
 ## USAGE
 
-- Add `bio` in pubspec.yaml
-- Download binary from [release](https://github.com/yech1990/biodart/releases)
+- As a dart package
+
+  - Add `bio` in pubspec.yaml
+  - Run `pub get`
+
+- As a command line tool
+
+  - Download binary from [release](https://github.com/yech1990/biodart/releases)
+  - Run `./bio` + subcommand
 
 ## DOCUMENTATION
 
@@ -50,3 +62,8 @@ Functions and command line tools for biological computation written in **Dart**.
 #### treeIO
 
 ### popgen
+
+## BENCHMARK
+
+vs. biopython
+vs. seqkit

@@ -1,13 +1,13 @@
-name: Build on Push
+name: Release
 
 on:
   push:
     tags:
-      - "v*"
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
 
 jobs:
   build:
-    name: Build and Release Binary
+    name: Build Binary/ Release Github
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -41,7 +41,7 @@ jobs:
           mkdir release
           7z a release/${{ matrix.release-name }}.7z build/${{ matrix.output-name }}
 
-      - name: Create Release
+      - name: Release Github
         uses: xresloader/upload-to-github-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
