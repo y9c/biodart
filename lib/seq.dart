@@ -158,7 +158,10 @@ void stream2File(Stream<Seq> seqStream, File outfile, String outputFormat,
   });
 }
 
-/// Count number of records in fasta file
+/// Count number of records in fasta file.
+///
+/// The number of records is counted as number of lines that starts with a
+/// `>` symbol.
 int countFa(File file) {
   var count = 0;
   for (var line in file.readAsLinesSync()) {
@@ -170,6 +173,10 @@ int countFa(File file) {
 }
 
 /// Count number of records in fasta file
+///
+/// The number of records is counted as number of lines that starts with a
+/// `@` symbol.
+/// Note: multiple lines fastq file is not supported.
 int countFq(File file) {
   var count = 0;
   for (var _ in file.readAsLinesSync()) {
@@ -178,9 +185,24 @@ int countFq(File file) {
   return count ~/= 4;
 }
 
-/// read and write
-/// filter sequence
-/// manipulate sequence
+/// # Read and write sequences file.
+///
+/// ## Features
+///
+/// - format fille
+///   - parse gz format
+///   - max number of charaters per line
+///
+/// - filter sequence
+///   - random subsample
+///   - filter records by list of names
+///   - filter records by sequence motif
+///
+/// - manipulate sequence
+///   - trime 5' end of the squence
+///   - trime 3' end of the squence
+///   - Reverse complement the sequence of each record
+///
 void seqIO(
     {String inputFile,
     String outputFile,

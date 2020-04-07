@@ -22,47 +22,22 @@ Functions and command line tools for biological computation written in **Dart**.
 
 ## DOCUMENTATION
 
-### seq (Seq)
+eg, convert fastq into fasta, then subsamples 2 records and reverse complement the sequences.
 
-#### seqIO
+```bash
+bio seq --input ./data/seq.fq \
+        --output ./data/seq_sampled.fa \
+        --sample 2 --sample-seed 123 \
+        --reverse-complement
+```
 
-- convert fastq into fasta
+- Read the CMD documentation to find out more examples:
 
-  ```bash
-  bio seq --input ./data/seq.fq --output ./data/seq.fa
-  ```
+  http://biodart.yech.xyz
 
-- format fasta with max number of characters per line
+- Read the API documentation to find out more details:
 
-  ```bash
-  bio seq --input ./data/seq.fq --output ./data/seq_formated.fa --fasta-line-length 20
-  ```
-
-- subset records with list of names
-
-  ```bash
-  bio seq --input ./data/seq.fq --output ./data/seq_subset.fa --filter-names ./data/name.list
-  ```
-
-- subsamples N records
-
-  ```bash
-  bio seq --input ./data/seq.fq --output ./data/seq_sampled.fa --sample 2 --sample-seed 123
-  ```
-
-- trim DNA records
-
-  ```bash
-  bio seq --input ./data/seq.fq --output ./data/seq_sample.fa --trim-start 6 --trim-end 3
-  ```
-
-#### alignIO
-
-### phylo (Phylo)
-
-#### treeIO
-
-### popgen
+  https://pub.dev/documentation/bio
 
 ## BENCHMARK
 
@@ -71,4 +46,3 @@ Functions and command line tools for biological computation written in **Dart**.
 | biodart         |        6.678 |       15.533 |
 | seqkit (Golang) |        0.996 |        0.879 |
 | seqtk (C)       |        0.849 |        0.854 |
-
