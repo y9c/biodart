@@ -16,7 +16,8 @@ Functions and command line tools for biological computation written in **Dart**.
 
 - As a command line tool
 
-  - Download binary from [release](https://github.com/yech1990/biodart/releases)
+  - Download binary from [release](https://github.com/yech1990/biodart/releases). linux, mac and win are available.
+  - Extract the binary file `7z e bio-xxx.7z`
   - Run `./bio` + subcommand
 
 ## DOCUMENTATION
