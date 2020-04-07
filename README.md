@@ -33,7 +33,7 @@ bio seq --input ./data/seq.fq \
 
 - Read the CMD documentation to find out more examples:
 
-  http://biodart.yech.xyz
+  https://biodart.yech.xyz
 
 - Read the API documentation to find out more details:
 
